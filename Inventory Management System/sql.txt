@@ -1,0 +1,62 @@
+-- Create database
+CREATE DATABASE InventoryDB;
+GO
+
+USE InventoryDB;
+GO
+
+-- Suppliers table
+CREATE TABLE Suppliers (
+    SupplierID INT IDENTITY(1,1) PRIMARY KEY,
+    SupplierName NVARCHAR(100) NOT NULL,
+    ContactName NVARCHAR(100),
+    Phone NVARCHAR(50),
+    Email NVARCHAR(100),
+    Address NVARCHAR(200),
+    IsActive BIT DEFAULT 1
+);
+
+-- Products table
+CREATE TABLE Products (
+    ProductID INT IDENTITY(1,1) PRIMARY KEY,
+    ProductName NVARCHAR(100) NOT NULL,
+    Category NVARCHAR(50),
+    Quantity INT NOT NULL DEFAULT 0,
+    Price DECIMAL(10,2) NOT NULL,
+    SupplierID INT FOREIGN KEY REFERENCES Suppliers(SupplierID),
+    ReorderLevel INT DEFAULT 10 -- threshold for low stock alerts
+);
+
+-- Sales table
+CREATE TABLE Sales (
+    SaleID INT IDENTITY(1,1) PRIMARY KEY,
+    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+    QuantitySold INT NOT NULL,
+    SaleDate DATETIME DEFAULT GETDATE(),
+    TotalAmount AS (QuantitySold * (SELECT Price FROM Products WHERE Products.ProductID = Sales.ProductID)) PERSISTED
+);
+
+-- Users table (for authentication)
+CREATE TABLE Users (
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(200) NOT NULL,
+    Role NVARCHAR(20) CHECK (Role IN ('Admin','User')) NOT NULL
+);
+
+-- Example queries for dashboard metrics
+
+-- Total Products
+SELECT COUNT(*) AS TotalProducts FROM Products;
+
+-- Low Stock Alerts
+SELECT COUNT(*) AS LowStockCount FROM Products WHERE Quantity < ReorderLevel;
+
+-- Total Sales (Monthly)
+SELECT SUM(QuantitySold * Price) AS MonthlySales
+FROM Sales s
+JOIN Products p ON s.ProductID = p.ProductID
+WHERE MONTH(SaleDate) = MONTH(GETDATE()) AND YEAR(SaleDate) = YEAR(GETDATE());
+
+-- Active Suppliers
+SELECT COUNT(*) AS ActiveSuppliers FROM Suppliers WHERE IsActive = 1;

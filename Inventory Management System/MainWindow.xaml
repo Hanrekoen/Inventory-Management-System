@@ -1,0 +1,71 @@
+﻿<Window x:Class="Inventory_Management_System.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Inventory_Management_System"
+        mc:Ignorable="d"
+        Title="Inventory Management System" Height="600" Width="900">
+
+    <Grid Background="#F5F5F5" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Summary cards -->
+            <RowDefinition Height="*"/>
+            <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- Summary Cards -->
+        <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,20">
+            <!-- Total Products -->
+            <Border Background="White" CornerRadius="8" Padding="15" Margin="10" 
+                    BorderBrush="#DDDDDD" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Total Products" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding TotalProducts}" 
+                               FontSize="28" Foreground="DarkBlue" 
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Low Stock Alerts -->
+            <Border Background="White" CornerRadius="8" Padding="15" Margin="10" 
+                    BorderBrush="#DDDDDD" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Low Stock Alerts" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding LowStockCount}" 
+                               FontSize="28" Foreground="DarkRed" 
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Total Sales (Monthly) -->
+            <Border Background="White" CornerRadius="8" Padding="15" Margin="10" 
+                    BorderBrush="#DDDDDD" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Total Sales (Monthly)" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding MonthlySales}" 
+                               FontSize="28" Foreground="Green" 
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Active Suppliers -->
+            <Border Background="White" CornerRadius="8" Padding="15" Margin="10" 
+                    BorderBrush="#DDDDDD" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Active Suppliers" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding ActiveSuppliers}" 
+                               FontSize="28" Foreground="Purple" 
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,173,0,0">
+            <Button Content="Add Product" Width="150" Height="40" Margin="10"/>
+            <Button Content="Record Sale" Width="150" Height="40" Margin="10"/>
+            <Button Content="Generate Report" Width="150" Height="40" Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Window>
