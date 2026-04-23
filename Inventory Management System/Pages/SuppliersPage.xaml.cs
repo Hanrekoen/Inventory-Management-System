@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inventory_Management_System
+namespace Inventory_Management_System.Pages
 {
     /// <summary>
-    /// Interaction logic for ProductsPage.xaml
+    /// Interaction logic for SuppliersPage.xaml
     /// </summary>
-    public partial class ProductsPage : Window
+    public partial class SuppliersPage : Page
     {
-        public ProductsPage()
+        public SuppliersPage()
         {
             InitializeComponent();
         }
