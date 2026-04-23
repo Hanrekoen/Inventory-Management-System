@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Inventory_Management_System.Models
 {
-    internal class Sale
+    public class Sale
     {
         public int SaleID { get; set; }         // Primary key
         public int ProductID { get; set; }      // Foreign key to Product

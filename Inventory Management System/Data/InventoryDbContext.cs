@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Inventory_Management_System.Models;
 using System.Data;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 
 namespace Inventory_Management_System.Data

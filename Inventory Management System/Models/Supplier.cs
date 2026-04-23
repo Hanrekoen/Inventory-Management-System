@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Inventory_Management_System.Models
 {
-    internal class Supplier
+    public class Supplier
     {
         public int SupplierID { get; set; }     // Primary key
         public string SupplierName { get; set; }
         public string ContactName { get; set; }
         public string Phone { get; set; }
-        public string ProductsSupplied { get; set; }
+        public string Email { get; set; }
     }
 }
