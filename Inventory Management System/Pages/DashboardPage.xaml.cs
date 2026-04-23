@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Inventory_Management_System.ViewModels;
 
 namespace Inventory_Management_System.Pages
 {
@@ -23,6 +24,7 @@ namespace Inventory_Management_System.Pages
         public DashboardPage()
         {
             InitializeComponent();
+            DataContext = new DashboardViewModel();
         }
     }
 }

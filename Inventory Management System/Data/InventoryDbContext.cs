@@ -1,27 +1,29 @@
-﻿using System;
+﻿using Inventory_Management_System.Models;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Inventory_Management_System.Models;
-using System.Data;
-using MySql.Data.MySqlClient;
+
 
 
 namespace Inventory_Management_System.Data
 {
-    public class InventoryDbContext 
+    public class InventoryDbContext
     {
-        private readonly string _connectionString = "server=MSI\\UDEMYMASTERSQL;database=InventoryDB;user=sa;password=20050615;";
+        private readonly string _connectionString;
 
-        public InventoryDbContext(string connectionString)
+        public InventoryDbContext()
         {
-            _connectionString = connectionString;
+            _connectionString = ConfigurationManager.ConnectionStrings["InventoryDB"].ConnectionString;
         }
 
-        private MySqlConnection GetConnection()
+        private SqlConnection GetConnection()
         {
-            return new MySqlConnection(_connectionString);
+            return new SqlConnection(_connectionString);
         }
 
         // ---------------- PRODUCTS ----------------
@@ -31,18 +33,19 @@ namespace Inventory_Management_System.Data
             using (var conn = GetConnection())
             {
                 conn.Open();
-                var cmd = new MySqlCommand("SELECT * FROM Products", conn);
+                var cmd = new SqlCommand("SELECT * FROM Products", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         products.Add(new Product
                         {
-                            ProductID = reader.GetInt32("ProductID"),
-                            ProductName = reader.GetString("ProductName"),
-                            Category = reader.GetString("Category"),
-                            Quantity = reader.GetInt32("Quantity"),
-                            Price = reader.GetDecimal("Price")
+                            ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
+                            SupplierID = reader.GetInt32(reader.GetOrdinal("SupplierID")),
+                            ProductName = reader.GetString(reader.GetOrdinal("ProductName")),
+                            Category = reader.GetString(reader.GetOrdinal("Category")),
+                            Quantity = reader.GetInt32(reader.GetOrdinal("Quantity")),
+                            Price = reader.GetDecimal(reader.GetOrdinal("Price"))
                         });
                     }
                 }
@@ -55,7 +58,7 @@ namespace Inventory_Management_System.Data
             using (var conn = GetConnection())
             {
                 conn.Open();
-                var cmd = new MySqlCommand(
+                var cmd = new SqlCommand(
                     "INSERT INTO Products (SupplierID, ProductName, Category, Quantity, Price) VALUES (@SupplierID, @Name, @Category, @Quantity, @Price)", conn);
                 cmd.Parameters.AddWithValue("@SupplierID", product.SupplierID);
                 cmd.Parameters.AddWithValue("@Name", product.ProductName);
@@ -73,18 +76,18 @@ namespace Inventory_Management_System.Data
             using (var conn = GetConnection())
             {
                 conn.Open();
-                var cmd = new MySqlCommand("SELECT * FROM Suppliers", conn);
+                var cmd = new SqlCommand("SELECT * FROM Suppliers", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         suppliers.Add(new Supplier
                         {
-                            SupplierID = reader.GetInt32("SupplierID"),
-                            SupplierName = reader.GetString("SupplierName"),
-                            ContactName = reader.GetString("ContactName"),
-                            Phone = reader.GetString("Phone"),
-                            Email = reader.GetString("Email")
+                            SupplierID = reader.GetInt32(reader.GetOrdinal("SupplierID")),
+                            SupplierName = reader.GetString(reader.GetOrdinal("SupplierName")),
+                            ContactName = reader.GetString(reader.GetOrdinal("ContactName")),
+                            Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                            Email = reader.GetString(reader.GetOrdinal("Email"))
                         });
                     }
                 }
@@ -99,18 +102,18 @@ namespace Inventory_Management_System.Data
             using (var conn = GetConnection())
             {
                 conn.Open();
-                var cmd = new MySqlCommand("SELECT * FROM Sales", conn);
+                var cmd = new SqlCommand("SELECT * FROM Sales", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         sales.Add(new Sale
                         {
-                            SaleID = reader.GetInt32("SaleID"),
-                            ProductID = reader.GetInt32("ProductID"),
-                            QuantitySold = reader.GetInt32("QuantitySold"),
-                            SaleDate = reader.GetDateTime("SaleDate"),
-                            TotalAmount = reader.GetDecimal("TotalAmount")
+                            SaleID = reader.GetInt32(reader.GetOrdinal("SaleID")),
+                            ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
+                            QuantitySold = reader.GetInt32(reader.GetOrdinal("QuantitySold")),
+                            SaleDate = reader.GetDateTime(reader.GetOrdinal("SaleDate")),
+                            TotalAmount = reader.GetDecimal(reader.GetOrdinal("TotalAmount")),
                         });
                     }
                 }
@@ -123,8 +126,8 @@ namespace Inventory_Management_System.Data
             using (var conn = GetConnection())
             {
                 conn.Open();
-                var cmd = new MySqlCommand(
-                    "INSERT INTO Sales (ProductID, QuantitySold, SaleDate, TotalAmount) VALUES (@ProductID, @QuantitySold, @SaleDate, @TotalAmount)", conn);
+                var cmd = new SqlCommand(
+                    "INSERT INTO Sales (ProductID, QuantitySold, SaleDate, TotalAmount, RecordedBy) VALUES (@ProductID, @QuantitySold, @SaleDate, @TotalAmount, @RecordedBy)", conn);
                 cmd.Parameters.AddWithValue("@ProductID", sale.ProductID);
                 cmd.Parameters.AddWithValue("@QuantitySold", sale.QuantitySold);
                 cmd.Parameters.AddWithValue("@SaleDate", sale.SaleDate);
