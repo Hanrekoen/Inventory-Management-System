@@ -25,7 +25,6 @@ namespace Inventory_Management_System.ViewModels
 
         public SuppliersViewModel()
         {
-            // Use App.config connection string (InventoryDbContext reads it automatically)
             _db = new InventoryDbContext();
             Suppliers = new ObservableCollection<Supplier>(_db.GetSuppliers());
 
@@ -37,26 +36,38 @@ namespace Inventory_Management_System.ViewModels
 
         private void AddSupplier(object obj)
         {
-            var newSupplier = new Supplier
+            if (obj is Supplier newSupplier)
             {
-                SupplierName = "New Supplier",
-                ContactName = "Contact Person",
-                Phone = "000-000-0000",
-                Email = "supplier@example.com"
-            };
-
-            // Implement AddSupplier in InventoryDbContext
-            // _db.AddSupplier(newSupplier);
-            Suppliers.Add(newSupplier);
+                _db.AddSupplier(newSupplier);
+                Suppliers.Add(newSupplier);
+            }
+            else
+            {
+                // Example default supplier if no object passed
+                var defaultSupplier = new Supplier
+                {
+                    SupplierName = "New Supplier",
+                    ContactName = "Contact Person",
+                    Phone = "000-000-0000",
+                    Email = "supplier@example.com"
+                };
+                _db.AddSupplier(defaultSupplier);
+                Suppliers.Add(defaultSupplier);
+            }
         }
 
         private void EditSupplier(object obj)
         {
             if (obj is Supplier supplier)
             {
-                // Implement UpdateSupplier in InventoryDbContext
-                // _db.UpdateSupplier(supplier);
-                // Refresh collection if needed
+                _db.UpdateSupplier(supplier);
+
+                var existing = Suppliers.FirstOrDefault(s => s.SupplierID == supplier.SupplierID);
+                if (existing != null)
+                {
+                    var index = Suppliers.IndexOf(existing);
+                    Suppliers[index] = supplier;
+                }
             }
         }
 
@@ -64,8 +75,7 @@ namespace Inventory_Management_System.ViewModels
         {
             if (obj is Supplier supplier)
             {
-                // Implement DeleteSupplier in InventoryDbContext
-                // _db.DeleteSupplier(supplier.SupplierID);
+                _db.DeleteSupplier(supplier.SupplierID);
                 Suppliers.Remove(supplier);
             }
         }

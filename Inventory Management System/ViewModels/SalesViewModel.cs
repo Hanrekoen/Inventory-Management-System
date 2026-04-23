@@ -27,17 +27,20 @@ namespace Inventory_Management_System.ViewModels
         public Product FilterProduct { get; set; }
 
         public ICommand AddSaleCommand { get; }
+        public ICommand EditSaleCommand { get; }
+        public ICommand DeleteSaleCommand { get; }
         public ICommand FilterSalesCommand { get; }
 
         public SalesViewModel()
         {
-            // Use App.config connection string (InventoryDbContext reads it automatically)
             _db = new InventoryDbContext();
 
             SalesHistory = new ObservableCollection<Sale>(_db.GetSales());
             Products = new ObservableCollection<Product>(_db.GetProducts());
 
             AddSaleCommand = new RelayCommand(AddSale);
+            EditSaleCommand = new RelayCommand(EditSale);
+            DeleteSaleCommand = new RelayCommand(DeleteSale);
             FilterSalesCommand = new RelayCommand(FilterSales);
         }
 
@@ -56,9 +59,33 @@ namespace Inventory_Management_System.ViewModels
             _db.AddSale(newSale);
             SalesHistory.Add(newSale);
 
-            // Reset fields after adding
+            // Reset fields
             QuantitySold = 0;
             SaleDate = DateTime.Now;
+        }
+
+        private void EditSale(object obj)
+        {
+            if (obj is Sale sale)
+            {
+                _db.UpdateSale(sale);
+
+                var existing = SalesHistory.FirstOrDefault(s => s.SaleID == sale.SaleID);
+                if (existing != null)
+                {
+                    var index = SalesHistory.IndexOf(existing);
+                    SalesHistory[index] = sale;
+                }
+            }
+        }
+
+        private void DeleteSale(object obj)
+        {
+            if (obj is Sale sale)
+            {
+                _db.DeleteSale(sale.SaleID);
+                SalesHistory.Remove(sale);
+            }
         }
 
         private void FilterSales(object obj)

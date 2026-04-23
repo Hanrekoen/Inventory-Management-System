@@ -48,7 +48,12 @@ namespace Inventory_Management_System.ViewModels
         {
             // Use the App.config connection string (InventoryDbContext reads it automatically)
             _db = new InventoryDbContext();
-            LoadDashboardData();
+            try { LoadDashboardData(); }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading dashboard data: {ex.Message}");
+            }
+
         }
 
         private void LoadDashboardData()

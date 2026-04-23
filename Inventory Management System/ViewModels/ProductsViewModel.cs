@@ -25,7 +25,7 @@ namespace Inventory_Management_System.ViewModels
 
         public ProductsViewModel()
         {
-            // Use App.config connection string (InventoryDbContext reads it automatically)
+            // Uses InventoryDbContext (connection string handled inside)
             _db = new InventoryDbContext();
             Products = new ObservableCollection<Product>(_db.GetProducts());
 
@@ -37,27 +37,40 @@ namespace Inventory_Management_System.ViewModels
 
         private void AddProduct(object obj)
         {
-            // Example: add a new product
-            var newProduct = new Product
+            if (obj is Product newProduct)
             {
-                SupplierID = 1, // replace with actual supplier selection
-                ProductName = "New Item",
-                Category = "General",
-                Quantity = 10,
-                Price = 99.99m
-            };
-
-            _db.AddProduct(newProduct);
-            Products.Add(newProduct);
+                _db.AddProduct(newProduct);
+                Products.Add(newProduct);
+            }
+            else
+            {
+                // Example default product if no object passed
+                var defaultProduct = new Product
+                {
+                    SupplierID = 1,
+                    ProductName = "New Item",
+                    Category = "General",
+                    Quantity = 10,
+                    Price = 99.99m
+                };
+                _db.AddProduct(defaultProduct);
+                Products.Add(defaultProduct);
+            }
         }
 
         private void EditProduct(object obj)
         {
             if (obj is Product product)
             {
-                // Implement update logic in InventoryDbContext (e.g., UpdateProduct)
-                // _db.UpdateProduct(product);
-                // Refresh Products collection if needed
+                _db.UpdateProduct(product);
+
+                // Refresh collection: replace the edited product
+                var existing = Products.FirstOrDefault(p => p.ProductID == product.ProductID);
+                if (existing != null)
+                {
+                    var index = Products.IndexOf(existing);
+                    Products[index] = product;
+                }
             }
         }
 
@@ -65,8 +78,7 @@ namespace Inventory_Management_System.ViewModels
         {
             if (obj is Product product)
             {
-                // Implement delete logic in InventoryDbContext (e.g., DeleteProduct)
-                // _db.DeleteProduct(product.ProductID);
+                _db.DeleteProduct(product.ProductID);
                 Products.Remove(product);
             }
         }
@@ -84,4 +96,3 @@ namespace Inventory_Management_System.ViewModels
         }
     }
 }
-
