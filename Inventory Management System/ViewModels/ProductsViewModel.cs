@@ -25,7 +25,8 @@ namespace Inventory_Management_System.ViewModels
 
         public ProductsViewModel()
         {
-            _db = new InventoryDbContext("server=localhost;database=InventoryDB;user=root;password=yourpassword;");
+            // Use App.config connection string (InventoryDbContext reads it automatically)
+            _db = new InventoryDbContext();
             Products = new ObservableCollection<Product>(_db.GetProducts());
 
             AddProductCommand = new RelayCommand(AddProduct);
@@ -34,10 +35,53 @@ namespace Inventory_Management_System.ViewModels
             SearchCommand = new RelayCommand(SearchProducts);
         }
 
-        private void AddProduct(object obj) { /* call _db.AddProduct(product) */ }
-        private void EditProduct(object obj) { /* update logic */ }
-        private void DeleteProduct(object obj) { /* delete logic */ }
-        private void SearchProducts(object obj) { /* filter logic */ }
+        private void AddProduct(object obj)
+        {
+            // Example: add a new product
+            var newProduct = new Product
+            {
+                SupplierID = 1, // replace with actual supplier selection
+                ProductName = "New Item",
+                Category = "General",
+                Quantity = 10,
+                Price = 99.99m
+            };
+
+            _db.AddProduct(newProduct);
+            Products.Add(newProduct);
+        }
+
+        private void EditProduct(object obj)
+        {
+            if (obj is Product product)
+            {
+                // Implement update logic in InventoryDbContext (e.g., UpdateProduct)
+                // _db.UpdateProduct(product);
+                // Refresh Products collection if needed
+            }
+        }
+
+        private void DeleteProduct(object obj)
+        {
+            if (obj is Product product)
+            {
+                // Implement delete logic in InventoryDbContext (e.g., DeleteProduct)
+                // _db.DeleteProduct(product.ProductID);
+                Products.Remove(product);
+            }
+        }
+
+        private void SearchProducts(object obj)
+        {
+            Products.Clear();
+            foreach (var p in _db.GetProducts())
+            {
+                if (string.IsNullOrEmpty(SearchText) || p.ProductName.Contains(SearchText))
+                {
+                    Products.Add(p);
+                }
+            }
+        }
     }
 }
 

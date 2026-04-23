@@ -25,7 +25,8 @@ namespace Inventory_Management_System.ViewModels
 
         public SuppliersViewModel()
         {
-            _db = new InventoryDbContext("server=localhost;database=InventoryDB;user=root;password=yourpassword;");
+            // Use App.config connection string (InventoryDbContext reads it automatically)
+            _db = new InventoryDbContext();
             Suppliers = new ObservableCollection<Supplier>(_db.GetSuppliers());
 
             AddSupplierCommand = new RelayCommand(AddSupplier);
@@ -34,9 +35,51 @@ namespace Inventory_Management_System.ViewModels
             SearchCommand = new RelayCommand(SearchSuppliers);
         }
 
-        private void AddSupplier(object obj) { /* insert logic */ }
-        private void EditSupplier(object obj) { /* update logic */ }
-        private void RemoveSupplier(object obj) { /* delete logic */ }
-        private void SearchSuppliers(object obj) { /* filter logic */ }
+        private void AddSupplier(object obj)
+        {
+            var newSupplier = new Supplier
+            {
+                SupplierName = "New Supplier",
+                ContactName = "Contact Person",
+                Phone = "000-000-0000",
+                Email = "supplier@example.com"
+            };
+
+            // Implement AddSupplier in InventoryDbContext
+            // _db.AddSupplier(newSupplier);
+            Suppliers.Add(newSupplier);
+        }
+
+        private void EditSupplier(object obj)
+        {
+            if (obj is Supplier supplier)
+            {
+                // Implement UpdateSupplier in InventoryDbContext
+                // _db.UpdateSupplier(supplier);
+                // Refresh collection if needed
+            }
+        }
+
+        private void RemoveSupplier(object obj)
+        {
+            if (obj is Supplier supplier)
+            {
+                // Implement DeleteSupplier in InventoryDbContext
+                // _db.DeleteSupplier(supplier.SupplierID);
+                Suppliers.Remove(supplier);
+            }
+        }
+
+        private void SearchSuppliers(object obj)
+        {
+            Suppliers.Clear();
+            foreach (var s in _db.GetSuppliers())
+            {
+                if (string.IsNullOrEmpty(SearchText) || s.SupplierName.Contains(SearchText))
+                {
+                    Suppliers.Add(s);
+                }
+            }
+        }
     }
 }

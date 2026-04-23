@@ -31,7 +31,9 @@ namespace Inventory_Management_System.ViewModels
 
         public SalesViewModel()
         {
-            _db = new InventoryDbContext("server=localhost;database=InventoryDB;user=root;password=yourpassword;");
+            // Use App.config connection string (InventoryDbContext reads it automatically)
+            _db = new InventoryDbContext();
+
             SalesHistory = new ObservableCollection<Sale>(_db.GetSales());
             Products = new ObservableCollection<Product>(_db.GetProducts());
 
@@ -39,7 +41,41 @@ namespace Inventory_Management_System.ViewModels
             FilterSalesCommand = new RelayCommand(FilterSales);
         }
 
-        private void AddSale(object obj) { /* call _db.AddSale(sale) */ }
-        private void FilterSales(object obj) { /* filter logic */ }
+        private void AddSale(object obj)
+        {
+            if (SelectedProduct == null || QuantitySold <= 0) return;
+
+            var newSale = new Sale
+            {
+                ProductID = SelectedProduct.ProductID,
+                QuantitySold = QuantitySold,
+                SaleDate = SaleDate,
+                TotalAmount = SelectedProduct.Price * QuantitySold
+            };
+
+            _db.AddSale(newSale);
+            SalesHistory.Add(newSale);
+
+            // Reset fields after adding
+            QuantitySold = 0;
+            SaleDate = DateTime.Now;
+        }
+
+        private void FilterSales(object obj)
+        {
+            SalesHistory.Clear();
+            foreach (var sale in _db.GetSales())
+            {
+                bool matchesDate = (!StartDate.HasValue || sale.SaleDate >= StartDate.Value) &&
+                                   (!EndDate.HasValue || sale.SaleDate <= EndDate.Value);
+
+                bool matchesProduct = FilterProduct == null || sale.ProductID == FilterProduct.ProductID;
+
+                if (matchesDate && matchesProduct)
+                {
+                    SalesHistory.Add(sale);
+                }
+            }
+        }
     }
 }
