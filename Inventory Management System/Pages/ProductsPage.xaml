@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Search Bar -->
@@ -22,18 +23,56 @@
         </StackPanel>
 
         <!-- Products DataGrid -->
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Products}" AutoGenerateColumns="False" Margin="0,0,0,10" IsReadOnly="True">
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Products}"
+                  SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                  AutoGenerateColumns="False" Margin="0,0,0,10" IsReadOnly="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Product ID" Binding="{Binding ProductID}" Width="100"/>
+                <DataGridTextColumn Header="Product ID" Binding="{Binding ProductID}" Width="100" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding ProductName}" Width="200"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="150"/>
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="100"/>
                 <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="120"/>
+                <DataGridTemplateColumn Header="Supplier" Width="200">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.Suppliers, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                      SelectedValue="{Binding SupplierID, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValuePath="SupplierID"
+                                      DisplayMemberPath="SupplierName"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- New Product Form -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Name" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Width="140" Height="28" Margin="0,0,12,0"
+                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Category" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Width="120" Height="28" Margin="0,0,12,0"
+                     Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Qty" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Width="60" Height="28" Margin="0,0,12,0"
+                     Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Price" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Width="80" Height="28" Margin="0,0,12,0"
+                     Text="{Binding Price, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Supplier" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox Width="160" Height="28"
+                      ItemsSource="{Binding Suppliers}"
+                      SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}"
+                      DisplayMemberPath="SupplierName"/>
+        </StackPanel>
+
         <!-- Action Buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Add Product" Width="120" Height="40" Margin="5" Command="{Binding AddProductCommand}"/>
             <Button Content="Edit Product" Width="120" Height="40" Margin="5" Command="{Binding EditProductCommand}"/>
             <Button Content="Delete Product" Width="120" Height="40" Margin="5" Command="{Binding DeleteProductCommand}"/>
