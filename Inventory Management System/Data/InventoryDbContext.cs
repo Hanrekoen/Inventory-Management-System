@@ -18,7 +18,7 @@ namespace Inventory_Management_System.Data
 
         public InventoryDbContext()
         {
-            _connectionString = "Server=MSI\\UDEMYMASTERSQL;Database=InventoryDB;User Id=sa;Password=20050615;";
+            _connectionString = ConfigurationManager.ConnectionStrings["InventoryDB"].ConnectionString;
 
         }
 
@@ -218,7 +218,7 @@ namespace Inventory_Management_System.Data
             using (var conn = new SqlConnection(_connectionString))
             {
                 var cmd = new SqlCommand(
-                    "UPDATE Sales SET ProductID=@ProductID, QuantitySold=@QuantitySold, SaleDate=@SaleDate, TotalAmount=@TotalAmountWHERE SaleID=@SaleID", conn);
+                    "UPDATE Sales SET ProductID=@ProductID, QuantitySold=@QuantitySold, SaleDate=@SaleDate, TotalAmount=@TotalAmount WHERE SaleID=@SaleID", conn);
                 cmd.Parameters.AddWithValue("@ProductID", sale.ProductID);
                 cmd.Parameters.AddWithValue("@QuantitySold", sale.QuantitySold);
                 cmd.Parameters.AddWithValue("@SaleDate", sale.SaleDate);

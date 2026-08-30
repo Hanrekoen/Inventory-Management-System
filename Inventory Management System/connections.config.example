@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectionStrings>
+  <add name="InventoryDB"
+       connectionString="Server=YOUR_SERVER;Database=InventoryDB;User Id=YOUR_USER;Password=YOUR_PASSWORD;"
+       providerName="System.Data.SqlClient" />
+</connectionStrings>
